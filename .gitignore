@@ -1,5 +1,7 @@
 dream_journal.csv
 DreamJournalInstaller.iss
 main.spec
+config.json
 /dist
 /build
+/Output

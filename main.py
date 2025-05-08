@@ -5,9 +5,32 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from datetime import datetime
+import tkinter.filedialog as filedialog
+import json
+
+# Ensure default save location is within a general folder for compatibility
+DEFAULT_FOLDER = os.path.join(os.getcwd(), "Dream Journal")
+if not os.path.exists(DEFAULT_FOLDER):
+    os.makedirs(DEFAULT_FOLDER)
 
 # Configurable variables
-CSV_FILE = "dream_journal.csv"
+CONFIG_FILE = os.path.join(DEFAULT_FOLDER, "config.json")
+DEFAULT_CSV_FILE = os.path.join(DEFAULT_FOLDER, "dream_journal.csv")
+
+# Load or initialize configuration
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as file:
+            return json.load(file)
+    return {"csv_file": DEFAULT_CSV_FILE}
+
+def save_config(config):
+    with open(CONFIG_FILE, "w") as file:
+        json.dump(config, file)
+
+# Initialize configuration
+config = load_config()
+CSV_FILE = config.get("csv_file", DEFAULT_CSV_FILE)
 
 box_width = 40
 title_height = 1.5
@@ -207,6 +230,24 @@ def show_graphs_filtered():
     plt.tight_layout()
     plt.show()
 
+# Function to change save location
+def change_save_location():
+    global CSV_FILE
+    new_location = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+    if new_location:
+        # Transfer existing data to the new location
+        if os.path.exists(CSV_FILE):
+            try:
+                os.rename(CSV_FILE, new_location)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to move existing data: {e}")
+                return
+
+        CSV_FILE = new_location
+        config["csv_file"] = CSV_FILE
+        save_config(config)
+        messagebox.showinfo("Save Location Changed", f"Dream journal will now be saved to: {CSV_FILE}")
+
 # GUI
 root = tk.Tk()
 root.title("🌙 Dream Journal")
@@ -229,7 +270,7 @@ for key, label in fields:
     elif key == "lucid":
         entries[key] = create_combobox(frame, key, [0, 1], combo_width)
     elif key == "technique":
-        entries[key] = create_combobox(frame, key, ["", "WILD", "MILD", "SSILD", "DEILD", "other"], 15)
+        entries[key] = create_combobox(frame, key, ["", "WILD", "MILD", "SSILD", "DEILD", "other"], combo_width)
     elif key == "tags":
         entries[key] = create_standard_entry(frame, key)
     else:
@@ -254,5 +295,8 @@ graph_type = tk.StringVar(value="line")
 ttk.Label(frame, text="Graph type:").grid(row=len(fields)+4, column=0, sticky="e")
 graph_type_combo = ttk.Combobox(frame, textvariable=graph_type, values=["line", "bar", "hist"], state="readonly", width=10)
 graph_type_combo.grid(row=len(fields)+4, column=1, sticky="w")
+
+# GUI additions for changing save location
+ttk.Button(frame, text="Change Save Location", command=change_save_location).grid(row=len(fields)+5, column=0, columnspan=2, pady=5)
 
 root.mainloop()
