@@ -103,34 +103,44 @@ def submit_form():
 def show_entries():
     df = read_csv_safe()
     if df.empty:
-        messagebox.showwarning("Error", "No dream found.")
+        messagebox.showwarning("Error", "No dreams found.")
         return
 
     top = tk.Toplevel(root)
-    top.title("📜 Journaled dreams")
+    top.title("📜 Logged Dreams")
 
     filter_frame = ttk.Frame(top, padding=10)
     filter_frame.pack()
 
-    ttk.Label(filter_frame, text="Filter by tag:").grid(row=0, column=0, sticky="w")
+    ttk.Label(filter_frame, text="Filter by tags:").grid(row=0, column=0, sticky="w")
     tag_filter = ttk.Entry(filter_frame, width=30)
     tag_filter.grid(row=0, column=1, sticky="w")
 
-    ttk.Label(filter_frame, text="Ordina per:").grid(row=1, column=0, sticky="w")
-    sort_filter = ttk.Combobox(filter_frame, values=["Date (most recent)", "Date (oldest)", "Vividness", "Satisfaction"], state="readonly", width=30)
-    sort_filter.grid(row=1, column=1, sticky="w")
+    ttk.Label(filter_frame, text="Search by content or title:").grid(row=1, column=0, sticky="w")
+    search_filter = ttk.Entry(filter_frame, width=30)
+    search_filter.grid(row=1, column=1, sticky="w")
+
+    ttk.Label(filter_frame, text="Sort by:").grid(row=2, column=0, sticky="w")
+    sort_filter = ttk.Combobox(filter_frame, values=["Date (newest)", "Date (oldest)", "Vividness", "Satisfaction"], state="readonly", width=30)
+    sort_filter.grid(row=2, column=1, sticky="w")
 
     def apply_filters():
         filtered_df = df.copy()
 
         # Filter by tag
-        tags = tag_filter.get().split(",")
+        tags = tag_filter.get().strip()
         if tags:
-            filtered_df = filtered_df[filtered_df["tags"].str.contains('|'.join(tags), na=False)]
+            filtered_df = filtered_df[filtered_df["tags"].str.contains('|'.join(tags.split(",")), na=False, case=False)]
+
+        # Search by content or title
+        search_query = search_filter.get().strip()
+        if search_query:
+            filtered_df = filtered_df[filtered_df["dream_text"].str.contains(search_query, na=False, case=False) |
+                                       filtered_df["dream_title"].str.contains(search_query, na=False, case=False)]
 
         # Sort by selected filter
         sort_option = sort_filter.get()
-        if sort_option == "Date (most recent)":
+        if sort_option == "Date (newest)":
             filtered_df = filtered_df.sort_values(by="date", ascending=False)
         elif sort_option == "Date (oldest)":
             filtered_df = filtered_df.sort_values(by="date", ascending=True)
@@ -143,12 +153,12 @@ def show_entries():
         text.delete("1.0", "end")
         for _, row in filtered_df.iterrows():
             text.insert("end", f"🗓️ {row['date']}\n")
-            text.insert("end", f"Lucido: {row['lucid']} | Vividness: {row['vividness']} | Hours: {row['hours']} | Sleep satisfaction: {row['satisfaction']} | Technique: {row['technique']}\n")
-            text.insert("end", f"Tag: {row['tags']}\n")
+            text.insert("end", f"Lucid: {row['lucid']} | Vividness: {row['vividness']} | Hours: {row['hours']} | Satisfaction: {row['satisfaction']} | Technique: {row['technique']}\n")
+            text.insert("end", f"Tags: {row['tags']}\n")
             text.insert("end", f"✏️ {row['dream_text']}\n")
             text.insert("end", "-"*80 + "\n")
 
-    ttk.Button(filter_frame, text="Apply filters", command=apply_filters).grid(row=2, column=0, columnspan=2, pady=10)
+    ttk.Button(filter_frame, text="Apply Filters", command=apply_filters).grid(row=3, column=0, columnspan=2, pady=10)
 
     text = tk.Text(top, wrap="word", width=100, height=30)
     text.pack(padx=10, pady=10)

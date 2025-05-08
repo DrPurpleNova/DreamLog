@@ -1,1 +1,5 @@
 dream_journal.csv
+DreamJournalInstaller.iss
+main.spec
+/dist
+/build
