@@ -1,6 +1,6 @@
-# Dream Journal
+# Dream Log
 
-Dream Journal is a desktop application developed in Python that allows users to record, analyze, and visualize their dreams. This project is designed for anyone who wants to keep track of their dreams, analyze them over time, and discover patterns or interesting details.
+Dream Log is a desktop application developed in Python that allows users to record, analyze, and visualize their dreams. This project is designed for anyone who wants to keep track of their dreams, analyze them over time, and discover patterns or interesting details.
 
 ## Features
 
