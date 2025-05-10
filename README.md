@@ -12,17 +12,14 @@ Dream Log is a desktop application developed in Python that allows users to reco
 ## How to Use
 
 1. **Installation**:
-   - Ensure you have Python 3.10 or higher installed on your system.
-   - Install the required dependencies by running:
+   - Download and run the installer.
+   - Download the latest version of the installer here:
      ```bash
-     pip install -r requirements.txt
+     https://github.com/DrPurpleNova/DreamLog/releases/latest
      ```
 
 2. **Launching the Application**:
-   - Run the `main.py` file:
-     ```bash
-     python main.py
-     ```
+   - Run the `DreamJournal` .exe.
 
 3. **Logging a Dream**:
    - Fill in the required fields in the form and click "💾 Save" to log the dream.
