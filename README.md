@@ -12,7 +12,7 @@ Dream Log is a desktop application developed in Python that allows users to reco
 ## How to Use
 
 1. **Installation**:
-   - Download and run the installer:
+   - Download and run the installer:  
      [Latest version](https://github.com/DrPurpleNova/DreamLog/releases/latest)
 
 2. **Launching the Application**:
@@ -37,7 +37,8 @@ Dream Log is a desktop application developed in Python that allows users to reco
 
 ## Requirements
 
-- Python 3.10 or higher
+- **Python 3.12** (intended version)  
+  The application is developed and tested using Python 3.12. While it may work on other versions (e.g., 3.10 or 3.13), full compatibility is not guaranteed.
 - Python Libraries:
   - `tkinter`
   - `pandas`
